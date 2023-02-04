@@ -1,18 +1,28 @@
 # Common
 SYS = $(shell uname)
 CC = gcc
-FLAGS = -Wall -Wextra -Werror
+DEBUG_FLAGS =#-g -fsanitize=adress # dont work with gcov and verter faild with him
+FLAGS = -c -Wall -Wextra -Werror $(DEBUG_FLAGS) -std=c11
 LEAKS = nothing
-SRCS = s21_string.c
-OBJS = $(SRCS:.c=.o)
 
 # Library
+LIB_SRC = lib/
+SRCS = copy.c #add new .c files
+OBJ_LIB_NAME = lib_obj
+OBJS = $(addprefix $(OBJ_LIB_NAME)/, $(SRCS:.c=.o)
+
 LIB_NAME = s21_string.a
 LIB_FLAGS = -lcheck -lm -lpthread
 
 # Testing
-TEST_NAME = test_s21_string.c
-TEST_FLAGS_GCOV = -fprofile-arcs -ftest-coverage # они нужны для покрытия пользовательского простарнства, но мне они не понадобились
+OBJ_TEST_NAME = test/test_obj
+TEST_SRC = test_s21_string.c
+TEST_OBJ = $(addprefix $(OBJ_TEST_NAME)/, $(TEST_SRC:.c=.o)
+
+
+TEST_FLAGS_GCOV = --coverage
+REPORT_NAME = gcov_result
+GCOV_INFO = gcov_result.info
 
 ifeq ($(SYS), Darwin) # Проверяем ОС
 	LIB_FLAGS = -lcheck
@@ -25,26 +35,30 @@ endif
 all: clean s21_string.a test gcov_report
 
 s21_string.a: clean
-	$(CC) -c $(SRCS) $(shell pkg-config --libs --cflags check) # указывается путь до библитеки check.h
-	ar rc $(LIB_NAME) $(OBJS) # нужно для запаковки всех скомпилированных файлов в библиотеку.а Опция c заставляет создавать (от create) библиотеку, если ее нет, а опция r (от replace) заменяет старые объектные файлы новыми версиями.
+	mkdir -p $(OBJ_LIB_NAME)
+	$(CC) $(FLAGS) $(SRCS) -o $(OBJS)
+	ar rc $(LIB_NAME) $(OBJS)
 	ranlib $(LIB_NAME)
-clean:
-	rm -rf test_lib ./*.o ./*.a ./a.out gcov_test *.html *.css ./GcovReport ./*.gcno ./*.gcda ./report ./*.info ./math_o ./*.dSYM ./test_s21math ./CPPLINT* test
 
-rebuild: clean all
+clean:
+	rm -rf test_lib ./*.o ./*.a ./a.out gcov_test *.html *.css ./GcovReport ./*.gcno ./*.gcda ./*.info ./math_o ./*.dSYM ./test_s21_string ./CPPLINT* test
 
 test: s21_string.a
 	# проверка создания статической библиотеки s21_string.a https://firststeps.ru/linux/r.php?5
-	$(CC) $(FLAGS) -c $(TEST_NAME) -o test.o $(shell pkg-config --libs --cflags check) # компилим любой сишник
-	$(CC) $(FLAGS) -c $(SRCS) -o $(OBJS) $(shell pkg-config --libs --cflags check) # компилим нашу библиотеку
-	$(CC) test.o $(OBJS) -L. -o test_lib $(shell pkg-config --libs --cflags check)
+	# $(CC) $(FLAGS) -c $(TEST_SRC) -o test.o $(shell pkg-config --libs --cflags check) # компилим любой сишник
+	# $(CC) $(FLAGS) -c $(SRCS) -o $(OBJS) $(shell pkg-config --libs --cflags check) # компилим нашу библиотеку
+	# $(CC) test.o $(OBJS) -L. -o test_lib $(shell pkg-config --libs --cflags check)
 	# проверка корректности функций
-	$(CC) $(FLAGS) --coverage $(TEST_NAME) $(SRCS) $(LIB_NAME) $(LIB_FLAGS) -o gcov_test $(shell pkg-config --libs --cflags check)
-	chmod +x *
-	./gcov_test
+	# $(CC) $(FLAGS) $(TEST_FLAGS_GCOV) $(TEST_SRC) $(SRCS) $(LIB_NAME) $(LIB_FLAGS) -o gcov_test $(shell pkg-config --libs --cflags check)
+	# chmod +x *
+	# ./gcov_test
+
+	mkdir -p $(OBJ_TEST_NAME)
+	$(CC) $(FLAGS) $(TEST_SRC) -o $(TEST_OBJ) $(shell pkg-config --libs --cflags check)
+
 
 gcov_report: s21_math.a
-	$(CC) $(FLAGS) --coverage $(TEST_NAME) $(SRCS) $(LIB_NAME) $(LIB_FLAGS) -o gcov_test $(shell pkg-config --libs --cflags check)
+	$(CC) $(FLAGS) $(TEST_FLAGS_GCOV) $(TEST_SRC) $(SRCS) $(LIB_NAME) $(LIB_FLAGS) -o gcov_test $(shell pkg-config --libs --cflags check)
 	chmod +x *
 	./gcov_test
 	lcov -t "gcov_test" -o gcov_test.info --no-external -c -d . # -t отвечает за имя теста https://stackoverflow.com/questions/837639/is-there-a-way-to-focus-lcov-code-coverage-reports-to-just-one-or-two-directorie
@@ -61,5 +75,3 @@ check: test
 	clang-format -style=google -n *.c *.h
 	rm -rf .clang-format
 	make test
-rebuild: clean al
-	open ./report/index.html
