@@ -10,11 +10,18 @@ void *s21_memcpy(void *dest, const void *src, s21_size_t n) { // Копируе�
 }
 
 void *s21_memmove(void *dest, const void *src, s21_size_t n) { // Еще одна функция для копирования n символов из src в dest.
-   
+    if (dest != s21_NULL && src != s21_NULL) {
+
+    }
+    return dest;
 }
 
 void *s21_memset(void *str, int c, s21_size_t n) { // Копирует символ c (беззнаковый тип) в первые n символов строки, на которую указывает аргумент str.
-
+    if (str != s21_NULL && c >= 0) {
+        for (int ch = 0; ch < n; ch++) {
+            ((unsigned char *)str)[ch] = c;
+        }
+    } 
 }
 
 char *s21_strcpy(char *dest, const char *src) { // Копирует строку, на которую указывает src, в dest.
