@@ -57,7 +57,7 @@ test: s21_string.a
 	$(CC) $(FLAGS) $(TEST_SRC) -o $(TEST_OBJ) $(shell pkg-config --libs --cflags check)
 
 
-gcov_report: s21_math.a
+gcov_report: s21_string.a
 	$(CC) $(FLAGS) $(TEST_FLAGS_GCOV) $(TEST_SRC) $(SRCS) $(LIB_NAME) $(LIB_FLAGS) -o gcov_test $(shell pkg-config --libs --cflags check)
 	chmod +x *
 	./gcov_test
