@@ -2,8 +2,8 @@
 
 START_TEST(strlen_test) {
     char buff[256] = "123456789";
-    ck_assert_str_eq(strlen(buff), s21_strlen(buff));
-    ck_assert_str_eq(strlen(s21_NULL), s21_strlen(s21_NULL));
+    ck_assert_msg(s21_strlen(buff) == strlen(buff), "Error");
+    // ck_assert_msg(s21_strlen(s21_NULL) == strlen(s21_NULL), "Error");
 } END_TEST
 
 Suite *s21_string_tests_create() {

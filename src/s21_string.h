@@ -10,5 +10,6 @@
 #define TRUE 1
 #define FALSE 0
 
+s21_size_t s21_strlen(const char *str);
 
 #endif  // SRC_S21_STRING_H_

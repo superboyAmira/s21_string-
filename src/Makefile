@@ -7,17 +7,15 @@ LEAKS = nothing
 
 # Library
 LIB_SRC = lib/
-SRCS =  $(LIB_SRC)$(wildcard s21_*.c)
-OBJ_LIB_NAME = lib_obj
-OBJS = $(addprefix $(OBJ_LIB_NAME)/, $(SRCS:.c=.o))
+SRCS = $(addprefix $(LIB_SRC), strlen.c copy.c)
+OBJS = $(SRCS:%.c=%.o)
 
 LIB_NAME = s21_string.a
 LIB_FLAGS = -lcheck -lm -lpthread
 
 # Testing
-OBJ_TEST_NAME = test/test_obj
-TEST_SRC = test_s21_string.c
-TEST_OBJ = $(addprefix $(OBJ_TEST_NAME)/, $(TEST_SRC:.c=.o))
+TEST_SRC = test_files/s21_test_string.c
+TEST_OBJ = $(TEST_SRC:.c=.o)
 
 
 TEST_FLAGS_GCOV = --coverage
@@ -34,17 +32,18 @@ endif
 
 all: clean s21_string.a test gcov_report
 
-s21_string.a: clean
-	mkdir -p $(OBJ_LIB_NAME)
-	$(CC) $(FLAGS) $(SRCS) -o $(OBJS)
+s21_string.a: $(OBJS)
 	ar rc $(LIB_NAME) $(OBJS)
 	ranlib $(LIB_NAME)
 
+%.o: %.c s21_string.h
+	$(CC) -c $<
+
 clean:
-	rm -rf lib_obj ./*.o ./*.a ./a.out gcov_test *.html *.css ./GcovReport ./*.gcno ./*.gcda ./*.info ./math_o ./*.dSYM ./CPPLINT* test
+	rm -rf lib_obj ./lib/*.o ./*.a ./a.out gcov_test *.html *.css report ./*.gcno ./*.gcda ./*.info ./math_o ./*.dSYM ./CPPLINT* test
 
 test: s21_string.a
-	$(CC) $(FLAGS) $(TEST_FLAGS_GCOV) $(TEST_SRC) $(SRCS) $(LIB_NAME) $(LIB_FLAGS) -o gcov_test $(shell pkg-config --libs --cflags check)
+	$(CC) $(TEST_FLAGS_GCOV) $(TEST_SRC) $(SRCS) $(LIB_NAME) $(LIB_FLAGS) -o gcov_test $(shell pkg-config --libs --cflags check)
 	chmod +x *
 	./gcov_test
 
