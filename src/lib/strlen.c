@@ -8,5 +8,3 @@ s21_size_t s21_strlen(const char *str) {
     }
     return result;
 }
-
-
