@@ -7,7 +7,7 @@ LEAKS = nothing
 
 # Library
 LIB_SRC = lib/
-SRCS = $(addprefix $(LIB_SRC), strlen.c copy.c)
+SRCS = $(addprefix $(LIB_SRC), strlen.c copy.c strtok.c insert.c)
 OBJS = $(SRCS:%.c=%.o)
 
 LIB_NAME = s21_string.a
@@ -37,10 +37,9 @@ s21_string.a: $(OBJS)
 	ranlib $(LIB_NAME)
 
 %.o: %.c s21_string.h
-	$(CC) -c $<
-
+	$(CC) $(FLAGS) $< -o $@
 clean:
-	rm -rf lib_obj ./lib/*.o ./*.a ./a.out gcov_test *.html *.css report ./*.gcno ./*.gcda ./*.info ./math_o ./*.dSYM ./CPPLINT* test
+	rm -rf lib_obj ./lib/*.o ./*.a ./*.o ./a.out gcov_test *.html *.css report ./*.gcno ./*.gcda ./*.info ./math_o ./*.dSYM ./CPPLINT* test
 
 test: s21_string.a
 	$(CC) $(TEST_FLAGS_GCOV) $(TEST_SRC) $(SRCS) $(LIB_NAME) $(LIB_FLAGS) -o gcov_test $(shell pkg-config --libs --cflags check)
