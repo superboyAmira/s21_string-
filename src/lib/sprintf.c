@@ -1,9 +1,9 @@
 #include "../s21_string.h"
+
 #include <stdarg.h>
 #include <string.h> // must be deleted
 #include <stdbool.h>
 #include <math.h>
-#define BUFF_SIZE 10000
 
 void reverse(char string[], int length);
 void s21_itoa_decimal(int num, char *str, s21_size_t place);
@@ -13,40 +13,37 @@ int s21_sprintf(char *str, const char *format, ... ) {
     int cnt_num = 0;
     va_list(input);
     va_start(input, format);
+    int chr_str = 0;
     
-    for (int chr_format = 0, chr_str = 0; format[chr_format] != '\0'; chr_format++) {
+    for (int chr_format = 0; format[chr_format] != '\0'; chr_format++) {
         if (format[chr_format] == '%') {
             if (format[chr_format + 1] == 'd' || format[chr_format + 1] == 'i') {
                 int param = va_arg(input, int);
                 s21_itoa_decimal(param, str, chr_str);
                 chr_format++;
                 chr_str++;
-                cnt_num++;
             } else if (format[chr_format + 1] == 'c') {
                 char param = (char)va_arg(input, int); // https://ru.manpages.org/va_arg/3
                 str[chr_format] = param;
                 chr_str++;
-                cnt_num++;
-            } else if (format[chr_format + 1] == 'f') {
+            } else if (format[chr_format + 1] == 'f' || (format[chr_format + 1] == 'l' && format[chr_format + 2] == 'f')) {
                 double param = va_arg(input, double);
                 double_to_string(param, str, chr_str);
                 chr_format++;
-                chr_str++;
-                cnt_num++;
+                // chr_str++;
+                chr_str = strlen(str);
             } else if (format[chr_format + 1] == 's') {
                 char *param = va_arg(input, char *);
                 strcat(str, param);
                 chr_str = strlen(str) - 1;
                 chr_format++;
-                cnt_num++;
-            // } else if (format[chr+1]) == 'u' { // беззнаковое число
+            // } else if (format[chr_format + 1] == 'u') { // беззнаковое число
             //     int param = va_arg(input, int);
             } else if (format[chr_format + 1] == '%') {
                 str[chr_str] = '%';
                 chr_format++;
-                cnt_num++;
             } else {
-                printf("Non-valid Format", stderr);
+                printf("Non-valid Format");
                 break; // если после % непонятно что, то программа ломается
             }
         } else {
@@ -55,7 +52,7 @@ int s21_sprintf(char *str, const char *format, ... ) {
         }
     }
     va_end(input);
-    return cnt_num;
+    return chr_str;
 }
 
 void s21_itoa_decimal(int num, char *str, s21_size_t place) { // convert int to string with radix 10
@@ -124,8 +121,11 @@ void double_to_string(double num, char *str, s21_size_t place) { // переве
 int main (void) {
     char dest2[100];
 
-    s21_sprintf(dest2, "abc %f", 1.04567);
-    printf ("src: %s", dest2);
-
+    // int cnt = s21_sprintf(dest2, "%d %f", 2, 1.04567);
+    // printf ("src: %s %d", dest2, cnt);
+    char str1[BUFF_SIZE];
+    char format[] = "%f %d %i";
+    int cnt = s21_sprintf(str1, format, 12.435, 5555555555, 44444444444);
+    printf ("src: %s %d", str1, cnt);
    return 0;
 }

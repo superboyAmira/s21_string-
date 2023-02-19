@@ -33,28 +33,28 @@ void *s21_insert(const char *src, const char *str, s21_size_t start_index) { // 
     return result;
 }
 
-s21_size_t s21_strlen(const char *str) {
-    s21_size_t result = 0;
-    while (*str != '\0') {
-        str++;
-        result++;
-    }
-    return result;
-}
+// s21_size_t s21_strlen(const char *str) {
+//     s21_size_t result = 0;
+//     while (*str != '\0') {
+//         str++;
+//         result++;
+//     }
+//     return result;
+// }
 
-int main (void)
-{
-   // Исходный массив
-   char src[15]="12345";
-   char dest[15]="hi";
+// int main (void)
+// {
+//    // Исходный массив
+//    char src[15]="12345";
+//    char dest[15]="hi";
  
-   // Заполняем массив символом ‘1’
-    // strcpy(dest, src);
-    char *res = s21_insert(src, dest, 3);
+//    // Заполняем массив символом ‘1’
+//     // strcpy(dest, src);
+//     char *res = s21_insert(src, dest, 3);
 
 
-   // Вывод массива src на консоль
-   printf ("src: %s", res);
+//    // Вывод массива src на консоль
+//    printf ("src: %s", res);
 
-   return 0;
-}
+//    return 0;
+// }

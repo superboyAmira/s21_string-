@@ -263,10 +263,6 @@ char *s21_strerror(int errcode) { // выводит ошибку под кодо
   return res;
 }
 
-char *s21_strtok(char *str, const char *sep) {
-
-}
-
 char *s21_strcat(char *dest, const char *app) { // app в dest, \0 в конце объединения
     int len = s21_strlen(dest);
     for(int i = 0; i < s21_strlen(app); i++) {

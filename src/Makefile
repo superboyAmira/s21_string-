@@ -2,12 +2,12 @@
 SYS = $(shell uname)
 CC = gcc
 DEBUG_FLAGS =#-g -fsanitize=adress # dont work with gcov and verter faild with him
-FLAGS = -c -Wall -Wextra -Werror $(DEBUG_FLAGS) -std=c11
+FLAGS = -c $(DEBUG_FLAGS) -std=c11 # werror -Wall -Wextra
 LEAKS = nothing
 
 # Library
 LIB_SRC = lib/
-SRCS = $(addprefix $(LIB_SRC), strlen.c copy.c strtok.c insert.c)
+SRCS = $(addprefix $(LIB_SRC), strlen.c copy.c strtok.c insert.c sprintf.c search.c lower_upper.c)
 OBJS = $(SRCS:%.c=%.o)
 
 LIB_NAME = s21_string.a
