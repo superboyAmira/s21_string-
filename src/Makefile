@@ -2,12 +2,12 @@
 SYS = $(shell uname)
 CC = gcc
 DEBUG_FLAGS =#-g -fsanitize=adress # dont work with gcov and verter faild with him
-FLAGS = -c $(DEBUG_FLAGS) -std=c11 # werror -Wall -Wextra
+FLAGS = -c -Wall -Wextra -Werror $(DEBUG_FLAGS) -std=c11
 LEAKS = nothing
 
 # Library
 LIB_SRC = lib/
-SRCS = $(addprefix $(LIB_SRC), strlen.c copy.c strtok.c insert.c sprintf.c search.c lower_upper.c)
+SRCS = $(addprefix $(LIB_SRC), s21_calc.c s21_comparison.c s21_copy.c s21_insert.c s21_lower_upper.c s21_search.c s21_sprintf.c s21_strtok.c s21_support.c s21_trim.c)
 OBJS = $(SRCS:%.c=%.o)
 
 LIB_NAME = s21_string.a
@@ -18,7 +18,7 @@ TEST_SRC = test_files/s21_test_string.c
 TEST_OBJ = $(TEST_SRC:.c=.o)
 
 
-TEST_FLAGS_GCOV = --coverage
+TEST_FLAGS_GCOV = --coverage -Wall -Wextra -Werror
 REPORT_NAME = gcov_result
 GCOV_INFO = gcov_result.info
 
@@ -39,7 +39,7 @@ s21_string.a: $(OBJS)
 %.o: %.c s21_string.h
 	$(CC) $(FLAGS) $< -o $@
 clean:
-	rm -rf lib_obj ./lib/*.o ./*.a ./*.o ./a.out gcov_test *.html *.css report ./*.gcno ./*.gcda ./*.info ./math_o ./*.dSYM ./CPPLINT* test
+	rm -rf lib_obj ./lib/*.o ./*.a ./*.o ./a.out gcov_test *.html *.css report ./*.gcno ./*.gcda ./*.info ./math_o ./*.dSYM ./CPPLINT* test ./a.out
 
 test: s21_string.a
 	$(CC) $(TEST_FLAGS_GCOV) $(TEST_SRC) $(SRCS) $(LIB_NAME) $(LIB_FLAGS) -o gcov_test $(shell pkg-config --libs --cflags check)
@@ -54,10 +54,9 @@ gcov_report: s21_string.a
 check: test
 	cppcheck --enable=all --suppress=missingIncludeSystem --inconclusive --check-config *.c *.h
 	cp ../materials/linters/CPPLINT.cfg .
-	python3 ../materials/linters/cpplint.py --extension=c *.c *.h *.c
+	python3 ../materials/linters/cpplint.py --extension=c lib/*.c lib/*.h
 	rm -rf CPPLINT.cfg
 	cp ../materials/linters/.clang-format .
-	clang-format -style=google -i *.c *.h
-	clang-format -style=google -n *.c *.h
+	clang-format -style=google -i lib/*.c lib/*.h s21_string.h test_files/*.c test_files/*.h
+	clang-format -style=google -n lib/*.c lib/*.h s21_string.h test_files/*.c test_files/*.h
 	rm -rf .clang-format
-	make test

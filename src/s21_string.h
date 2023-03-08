@@ -1,37 +1,59 @@
 #ifndef SRC_S21_STRING_H_
 #define SRC_S21_STRING_H_
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
-#define BUFF_SIZE 10000
+#include "lib/s21_sprintf.h"
+
 #define s21_size_t unsigned long long
-#define s21_NULL (void*)0 
+#define s21_NULL (void *)0
 #define flag short int
 #define TRUE 1
 #define FALSE 0
 
-// структура для формата
-typedef struct s21_variety {
-    int flag_minus; // выравнивание по левому краю
-    int flag_plus; // принудительное выставление знака
-    int flag_space; // если без знака, то вместо него - пробел
-    int width; // минимальное количество печатаемых символов
-    int precision; // минимальное количество записываемых цифр (символов после точки)
-    char length; // длина l, h
-    int point; // точка
-} s21_format;
-
+// calc.c
 s21_size_t s21_strlen(const char *str);
+s21_size_t s21_strspn(const char *str1, const char *str2);
+s21_size_t s21_strcspn(const char *str1, const char *str2);
+
+// strtok.c
 char *s21_strtok(char *str, const char *delim);
+
+// comparison.c
+int s21_memcmp(const void *str1, const void *str2, s21_size_t n);
+int s21_strcmp(const char *str1, const char *str2);
+int s21_strncmp(const char *str1, const char *str2, s21_size_t n);
+
+// copy.c
+void *s21_memcpy(void *dest, const void *src, s21_size_t n);
+void *s21_memmove(void *dest, const void *src, s21_size_t n);
 void *s21_memset(void *str, int c, s21_size_t n);
 char *s21_strcpy(char *dest, const char *src);
 char *s21_strncpy(char *dest, const char *src, s21_size_t n);
-void *s21_memmove(void *dest, const void *src, s21_size_t n);
-void *s21_memcpy(void *dest, const void *src, s21_size_t n);
-void *s21_insert(const char *src, const char *str, s21_size_t start_index);
-int s21_sprintf(char *str, const char *format, ... );
 
+// insert.c
+void *s21_insert(const char *src, const char *str, s21_size_t start_index);
+
+// lower_upper.c
+void *s21_to_upper(const char *str);
+void *s21_to_lower(const char *str);
+
+// search.c
+void *s21_memchr(const void *arr, int c, s21_size_t n);
+char *s21_strchr(const char *str, int ch);
+char *s21_strpbrk(const char *str, const char *sym);
+char *s21_strrchr(const char *str, int ch);
+char *s21_strstr(const char *str1, const char *str2);
+
+// support.c
+char *s21_strerror(int errcode);
+char *s21_strcat(char *dest, const char *app);
+char *s21_strncat(char *dest, const char *app, s21_size_t n);
+
+// trim.c
+void *s21_trim(const char *src, const char *trim_chars);
+s21_size_t s21_strspn_reverse(const char *str1, const char *str2);
 
 #endif  // SRC_S21_STRING_H_
